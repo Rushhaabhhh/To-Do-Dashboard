@@ -1,21 +1,15 @@
-import { Redis } from 'ioredis';  
+import { Redis } from '@upstash/redis';
+
 import { Todo } from './types';
 
-const CACHE_TTL = 3600; 
+const CACHE_TTL = 3600 // 1 hour in seconds
 
 export class TodoCache {
   private redis: Redis;
   private readonly prefix = 'todo:';
 
-  constructor() {
-    // Use environment variables for Redis configuration
-    const redisHost = process.env.REDIS_HOST;
-    const redisPort = process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT, 10) : undefined;
-
-    this.redis = new Redis({
-      host: redisHost,
-      port: redisPort,
-    });
+  constructor(redis: Redis) {
+    this.redis = redis;
   }
 
   private getKey(id: string): string {
@@ -24,11 +18,13 @@ export class TodoCache {
 
   async get(id: string): Promise<Todo | null> {
     const data = await this.redis.get(this.getKey(id));
-    return data ? JSON.parse(data) : null; 
+    return data as Todo | null;
   }
 
   async set(todo: Todo): Promise<void> {
-    await this.redis.set(this.getKey(todo.id), JSON.stringify(todo), 'EX', CACHE_TTL);
+    await this.redis.set(this.getKey(todo.id), JSON.stringify(todo), {
+      ex: CACHE_TTL,
+    });
   }
 
   async delete(id: string): Promise<void> {
@@ -43,6 +39,6 @@ export class TodoCache {
       keys.map(key => this.redis.get(key))
     );
     
-    return todos.filter(Boolean).map(todo => JSON.parse(todo as string)) as Todo[];
+    return todos.filter(Boolean) as Todo[];
   }
 }

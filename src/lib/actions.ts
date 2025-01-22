@@ -1,10 +1,11 @@
 'use server'
 
 import { revalidatePath } from 'next/cache';
+import { redis } from './redis';
 import { TodoCache } from './cache';
 import { Todo, TodoFilter } from './types';
 
-const todoCache = new TodoCache();
+const todoCache = new TodoCache(redis);
 
 export async function addTodo(formData: FormData): Promise<Todo> {
   const title = formData.get('title') as string;
@@ -22,8 +23,7 @@ export async function addTodo(formData: FormData): Promise<Todo> {
     dueDate,
     priority,
     tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
-    text: title // Using title as text for search functionality
-    ,
+    text: title,
     date: ''
   };
 
