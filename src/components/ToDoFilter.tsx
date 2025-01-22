@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Todo, TodoFilter } from '../lib/types';
 import TodoItem from './ToDoItem';
-import { Search, Calendar, ListFilter, CheckCircle2 } from 'lucide-react';
+import { Search, ListFilter, CheckCircle2 } from 'lucide-react';
 
 interface TodoFilterProps {
   initialTodos: Todo[];
@@ -18,35 +18,25 @@ export default function TodoFilterComponent({ initialTodos }: TodoFilterProps) {
     setFilter(newFilter);
 
     const filtered = initialTodos.filter((todo) => {
+      // Search filter
       if (
         newFilter.searchTerm &&
-        !todo.text.toLowerCase().includes(newFilter.searchTerm.toLowerCase())
+        !(
+          todo.title.toLowerCase().includes(newFilter.searchTerm.toLowerCase()) ||
+          todo.description?.toLowerCase().includes(newFilter.searchTerm.toLowerCase())
+        )
       ) {
         return false;
       }
 
+      // Priority filter
       if (newFilter.priority && todo.priority !== newFilter.priority) {
         return false;
       }
 
+      // Completion status filter
       if (newFilter.completed !== undefined && todo.completed !== newFilter.completed) {
         return false;
-      }
-
-      if (newFilter.dateRange?.start) {
-        const todoDate = new Date(todo.date);
-        const startDate = new Date(newFilter.dateRange.start);
-        if (todoDate < startDate) {
-          return false;
-        }
-      }
-
-      if (newFilter.dateRange?.end) {
-        const todoDate = new Date(todo.date);
-        const endDate = new Date(newFilter.dateRange.end);
-        if (todoDate > endDate) {
-          return false;
-        }
       }
 
       return true;
@@ -57,8 +47,8 @@ export default function TodoFilterComponent({ initialTodos }: TodoFilterProps) {
 
   return (
     <div className="mb-6 p-4 bg-white rounded-lg shadow space-y-4">
-      {/* Filter Inputs */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
         {/* Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -99,43 +89,6 @@ export default function TodoFilterComponent({ initialTodos }: TodoFilterProps) {
             <option value="true">Completed</option>
             <option value="false">Pending</option>
           </select>
-        </div>
-      </div>
-
-      {/* Date Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Start Date */}
-        <div className="relative">
-          <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <input
-            type="date"
-            onChange={(e) =>
-              handleFilterChange({
-                dateRange: {
-                  start: e.target.value,
-                  end: filter.dateRange?.end || '',
-                },
-              })
-            }
-            className="pl-10 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-
-        {/* End Date */}
-        <div className="relative">
-          <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <input
-            type="date"
-            onChange={(e) =>
-              handleFilterChange({
-                dateRange: {
-                  start: filter.dateRange?.start || '',
-                  end: e.target.value,
-                },
-              })
-            }
-            className="pl-10 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          />
         </div>
       </div>
 

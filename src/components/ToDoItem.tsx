@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Tag, AlertCircle, CheckCircle2, Trash2 } from 'lucide-react';
+import { Calendar, Tag, CheckCircle2, Trash2 } from 'lucide-react';
 import { Todo } from '../lib/types';
 import { deleteTodo, toggleTodo } from '@/lib/actions';
 
@@ -41,9 +41,9 @@ export default function TodoItem({ todo }: { todo: Todo }) {
 
   const getPriorityColor = (priority: 'high' | 'medium' | 'low') => {
     const colors = {
-      high: 'text-red-700',
-      medium: 'text-amber-700',
-      low: 'text-emerald-700'
+      high: 'bg-red-50 text-red-700 ring-red-600/20',
+      medium: 'bg-amber-50 text-amber-700 ring-amber-600/20',
+      low: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20'
     };
     return colors[priority] || 'text-gray-700';
   };
@@ -102,15 +102,16 @@ export default function TodoItem({ todo }: { todo: Todo }) {
           </div>
         </div>
 
-        <div className="flex items-center space-x-4">
-          <AlertCircle
-            className={`w-5 h-5 ${getPriorityColor(todo.priority)}`}
-          />
+        <div className="flex items-center gap-3">
+          <span className={`px-3 py-1 rounded-full text-sm font-medium ${getPriorityColor(todo.priority)}`}>
+            {todo.priority}
+          </span>
+          
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={handleDelete}
-            className="text-red-500 hover:text-red-700 focus:outline-none"
+            className="text-gray-400 hover:text-red-500 transition-colors"
           >
             <Trash2 className="w-5 h-5" />
           </motion.button>

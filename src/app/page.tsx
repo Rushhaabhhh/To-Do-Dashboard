@@ -15,9 +15,9 @@ export default async function Home() {
         <AddTodoForm />
       </Suspense>
       
-      {/* <Suspense fallback={<div>Loading filters...</div>}>
+      <Suspense fallback={<div>Loading filters...</div>}>
         <TodoFilter initialTodos={todos} />
-      </Suspense> */}
+      </Suspense>
       
       <div className="space-y-4">
         <h2 className="text-xl font-semibold mb-4">Tasks</h2>
