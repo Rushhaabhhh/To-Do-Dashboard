@@ -17,7 +17,7 @@ export default function TodoItem({ todo }: { todo: Todo }) {
       setIsLoading(true);
       setError(null);
       await toggleTodo(todo.id);
-    } catch (err) {
+    } catch {
       setError('Failed to update task');
     } finally {
       setIsLoading(false);
@@ -32,7 +32,7 @@ export default function TodoItem({ todo }: { todo: Todo }) {
       setIsLoading(true);
       setError(null);
       await deleteTodo(todo.id);
-    } catch (err) {
+    } catch {
       setError('Failed to delete task');
     } finally {
       setIsLoading(false);
